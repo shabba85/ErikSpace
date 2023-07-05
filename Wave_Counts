@@ -6,3 +6,5 @@ union all
 select 'Inscope for Wave 1 & 2',COUNT(*) Total_Count,COUNT(distinct cust_id) Distinct_Count
 FROM fcm_dw.club_unified_fan 
 where club_code in  ('BUF','KCC','CIN','JAX','NEP','DET','ARI','DEN','SFR','LAC','DAL')
+
+here's a new change
