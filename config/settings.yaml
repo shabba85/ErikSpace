@@ -1,0 +1,60 @@
+# Runtime settings.  Secrets live in .env, never here and never in code.
+
+providers:
+  # Order matters. The first reachable provider with data is primary; the next
+  # is used by the reconciliation gate as an independent second opinion.
+  # yahoo is always LAST and always flagged confidence='low' in provenance.
+  fundamentals: [fmp, eodhd, tiingo, yahoo]
+  prices:       [fmp, tiingo, eodhd, yahoo]
+
+reconciliation:
+  # Anchors cross-checked against a second source before a row may be scored.
+  anchors: [last_close, diluted_shares, revenue_ttm]
+  tolerance_pct: 2.0          # >2% disagreement blocks scoring, raises RECONCILIATION_FAILED
+  require_second_source: true # if no second source answers, the row is BLOCKED, not passed
+
+http:
+  cache_ttl_seconds:
+    prices: 3600
+    statements: 604800
+    macro: 3600
+    filings: 2592000
+  rate_limit_per_minute:
+    fmp: 300
+    eodhd: 1000
+    tiingo: 500
+    yahoo: 60
+    sec: 600          # SEC fair-access limit is 10 req/s
+    boc: 120
+    statcan: 60
+    eia: 300
+    sedar: 30
+  retries: 4
+  backoff_seconds: [2, 4, 8, 16]
+  timeout_seconds: 30
+  user_agent: "ledger/0.1 (single-user research tool; contact via .env LEDGER_CONTACT)"
+
+scoring:
+  composite_enabled: false     # OFF by default. Never the headline.
+  max_null_fraction: 0.20      # composite refuses to compute above this
+
+valuation:
+  reverse_dcf:
+    fade_years: [5, 10, 15]    # solved for each; all reported
+    terminal_growth: 0.02      # explicit assumption, printed with every output
+    solver_bounds: [-0.50, 1.00]
+    solver_tol: 1.0e-6
+  epv:
+    normalization_years: 7     # Greenwald: average EBIT margin over a full cycle
+
+portfolio:
+  kelly_fraction: 0.25         # fractional Kelly
+  max_position_weight: 0.20
+  # Keeps the Kelly search strictly inside the ruin point, where expected log
+  # wealth diverges. Structural, not a view about markets.
+  kelly_ruin_guard: 0.999
+
+paths:
+  db: data/ledger.db
+  raw: data/raw
+  http_log: data/http.log.jsonl

@@ -1,0 +1,74 @@
+# Published model coefficients.
+#
+# These are NOT financial data and NOT assumptions about any company -- they are
+# the published constants of named academic models. They live here rather than
+# in code so that every one is auditable, citable, and greppable in one place.
+#
+# Each block carries its source so the audit trail reaches the original paper.
+
+altman_z:
+  citation: "Altman, E. (1968), 'Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy', Journal of Finance 23(4)"
+  applies_to: "public manufacturers"
+  coefficients:
+    working_capital_to_assets: 1.2
+    retained_earnings_to_assets: 1.4
+    ebit_to_assets: 3.3
+    market_equity_to_liabilities: 0.6
+    sales_to_assets: 1.0
+  zones: {distress_below: 1.81, safe_above: 2.99}
+
+altman_z_double_prime:
+  citation: "Altman, E., Hartzell, J., Peck, M. (1995), 'Emerging Market Corporate Bonds: A Scoring System'"
+  applies_to: "service, asset-light and non-manufacturing issuers; uses book equity, drops asset turnover"
+  coefficients:
+    working_capital_to_assets: 6.56
+    retained_earnings_to_assets: 3.26
+    ebit_to_assets: 6.72
+    book_equity_to_liabilities: 1.05
+  zones: {distress_below: 1.1, safe_above: 2.6}
+
+beneish_m:
+  citation: "Beneish, M. (1999), 'The Detection of Earnings Manipulation', Financial Analysts Journal 55(5)"
+  intercept: -4.84
+  coefficients:
+    dsri: 0.920
+    gmi: 0.528
+    aqi: 0.404
+    sgi: 0.892
+    depi: 0.115
+    sgai: -0.172
+    tata: 4.679
+    lvgi: -0.327
+  threshold: -1.78   # above this, elevated probability of manipulation
+
+montier_c:
+  citation: "Montier, J. (2008), 'Cooking the Books, or, More Sailing under the Black Flag', SG Cross Asset Research"
+  asset_growth_threshold: 0.10
+
+piotroski_f:
+  citation: "Piotroski, J. (2000), 'Value Investing: The Use of Historical Financial Statement Information to Separate Winners from Losers', Journal of Accounting Research 38"
+  max_score: 9
+
+# Sector -> which Altman variant is admissible. Financials get neither.
+altman_variant_by_sector:
+  Energy: z
+  Materials: z
+  Industrials: z
+  "Consumer Staples": z
+  "Consumer Discretionary": z
+  "Information Technology": z_double_prime
+  "Communication Services": z_double_prime
+  "Health Care": z_double_prime
+  Utilities: z_double_prime
+  "Real Estate": z_double_prime
+  Financials: none
+
+incremental_roic:
+  # Below this movement in invested capital the ratio is a small number divided
+  # by a smaller one: noise, not a return on incremental capital.
+  min_delta_invested_capital_pct: 0.05
+
+base_rates:
+  # Growth assumptions above this require a historical base rate for context.
+  # Below it, growth is unremarkable and no base rate is demanded.
+  growth_threshold: 0.10

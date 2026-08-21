@@ -1,0 +1,18 @@
+# ledger scheduled refresh (Linux / cron)
+#   crontab -e   then paste, adjusting LEDGER_HOME.
+#
+# Prices daily, statements weekly, macro daily -- matching how often each
+# actually changes. Refreshing statements daily just burns API quota against
+# data that moves four times a year.
+
+LEDGER_HOME=/path/to/ErikSpace
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# macro, every weekday at 07:15 local -- before the open
+15 7 * * 1-5 cd $LEDGER_HOME && .venv/bin/ledger macro >> data/cron.macro.log 2>&1
+
+# prices, every weekday at 17:30 local -- after the TSX close settles
+30 17 * * 1-5 cd $LEDGER_HOME && .venv/bin/ledger refresh $(cat config/universe.txt | tr '\n' ' ') --wacc 0.09 >> data/cron.prices.log 2>&1
+
+# statements, Saturday 06:00 -- a full refetch with cache bypassed
+0 6 * * 6 cd $LEDGER_HOME && .venv/bin/ledger refresh $(cat config/universe.txt | tr '\n' ' ') --wacc 0.09 --force >> data/cron.statements.log 2>&1

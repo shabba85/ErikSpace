@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block title %}audit {{ ticker }}{% endblock %}
+{% block nav %}<a href="/company/{{ ticker }}">{{ ticker }}</a>{% endblock %}
+{% block body %}
+<h2>Audit log &mdash; {{ ticker }}</h2>
+<p class="meta">Every field with its source URL and retrieval timestamp.
+{{ summary.metrics_populated }}/{{ summary.metrics_total }} computed metrics populated,
+{{ summary.statement_fields }} statement fields stored.</p>
+{% for r in rows %}
+<details>
+<summary>{{ r.metric }} =
+{% if r.value is not none %}{{ '%.6g'|format(r.value) }} {{ r.unit }}
+{% else %}<span class="null">{{ r.status }}</span>{% endif %}
+<span class="meta">as_of {{ r.as_of or '-' }}</span></summary>
+<table>
+{% if r.missing %}<tr><th>missing</th><td class="null">{{ r.missing|join('<br>')|safe }}</td></tr>{% endif %}
+<tr><th>method</th><td>{{ r.method or '-' }} &middot; confidence {{ r.confidence or '-' }}</td></tr>
+{% if r.formula %}<tr><th>formula</th><td><code>{{ r.formula }}</code></td></tr>{% endif %}
+{% if r.source_url %}<tr><th>source</th><td>{{ r.source_name }}<br>
+<a href="{{ r.source_url }}" target="_blank" rel="noopener"><code>{{ r.source_url }}</code></a></td></tr>{% endif %}
+<tr><th>retrieved</th><td>{{ r.retrieved_at or '-' }}</td></tr>
+{% if r.raw_payload %}<tr><th>raw payload</th><td><code>{{ r.raw_payload }}</code></td></tr>{% endif %}
+{% if r.input_provenance_ids %}<tr><th>input provenance</th><td><code>{{ r.input_provenance_ids|join(', ') }}</code></td></tr>{% endif %}
+{% if r.note %}<tr><th>note</th><td class="meta">{{ r.note }}</td></tr>{% endif %}
+<tr><th>trace</th><td><a href="/api/trace/{{ ticker }}/{{ r.metric }}">json</a></td></tr>
+</table>
+</details>
+{% endfor %}
+{% endblock %}

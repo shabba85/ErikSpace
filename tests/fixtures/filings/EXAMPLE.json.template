@@ -1,0 +1,28 @@
+{
+  "_comment": [
+    "Copy to <TICKER>.json (drop the .template suffix) and fill from the",
+    "issuer's own annual statements on SEDAR+. Then:",
+    "  ledger verify-filing XYZ.TO --filing tests/fixtures/filings/XYZ.json",
+    "or just run pytest -- test_acceptance_1_live_reconciles_to_real_filing",
+    "picks up every *.json in this directory.",
+    "unit_scale converts the filing's units: 1000000 if figures are in millions."
+  ],
+  "ticker": "XYZ.TO",
+  "period_end": "2025-12-31",
+  "source_name": "XYZ Ltd 2025 Annual Report, consolidated financial statements, p.62",
+  "source_url": "https://www.sedarplus.ca/...",
+  "currency": "CAD",
+  "unit_scale": 1000000,
+  "figures": {
+    "revenue": null,
+    "operating_income": null,
+    "net_income": null,
+    "total_assets": null,
+    "total_equity": null,
+    "total_debt": null,
+    "cash_and_equivalents": null,
+    "cash_from_operations": null,
+    "capital_expenditure": null,
+    "diluted_shares": null
+  }
+}

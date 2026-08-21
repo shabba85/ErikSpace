@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% block title %}{{ ticker }}{% endblock %}
+{% block nav %}<a href="/audit/{{ ticker }}">audit log</a>{% endblock %}
+{% block body %}
+<h2>{{ ticker }} <span class="meta">{{ company.name or '' }} &mdash; {{ schema }} schema</span></h2>
+<p class="meta">as of <strong>{{ summary.as_of or 'unknown' }}</strong> &middot;
+{{ summary.metrics_populated }} populated / {{ summary.metrics_null }} null of {{ summary.metrics_total }} &middot;
+sources: {{ summary.distinct_sources|join(', ') or 'none' }} &middot;
+<a href="/audit/{{ ticker }}">audit log</a></p>
+{% if summary.low_confidence_values %}
+<div class="warn">{{ summary.low_confidence_values }} value(s) derive from a low-confidence source (Yahoo). Treat accordingly.</div>{% endif %}
+{% if summary.reconciliation and summary.reconciliation.blocked %}
+<div class="banner"><strong>RECONCILIATION_FAILED &mdash; this row is blocked from scoring.</strong>
+<div class="meta">{{ summary.reconciliation.reason }}</div></div>{% endif %}
+{% for w in deck_warnings %}<div class="warn">deck: {{ w }}</div>{% endfor %}
+<div class="wrap"><table>
+<tr><th>metric</th><th>value</th><th>unit</th><th>as of</th><th>method</th><th>source</th></tr>
+{% for r in rows %}
+<tr>
+<td>{{ r.metric }}</td>
+<td>{% if r.value is not none %}{{ '%.6g'|format(r.value) }}
+{% elif r.status == 'not_applicable' %}<span class="na">not applicable to this business model</span>
+{% else %}<span class="null">insufficient data</span>{% endif %}</td>
+<td>{{ r.unit or '' }}</td><td>{{ r.as_of or '-' }}</td>
+<td>{{ r.method or '-' }}{% if r.confidence == 'low' %} <span class="badge low">low</span>{% endif %}</td>
+<td>{% if r.source_url %}<a href="{{ r.source_url }}" target="_blank" rel="noopener">{{ r.source_name }}</a>{% else %}-{% endif %}</td>
+</tr>
+{% if r.value is none and r.missing %}
+<tr><td colspan="6" class="meta null">&#8627; missing: {{ r.missing|join('; ') }}</td></tr>{% endif %}
+{% endfor %}
+</table></div>
+{% if na_fields %}
+<h3>Not applicable to a {{ schema }}</h3>
+<p class="meta">These are absent by design, not missing. A bank has no working capital, no
+enterprise value and no invested capital in any meaningful sense.</p>
+<p class="na">{{ na_fields|join(' &middot; ')|safe }}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% block title %}ledger &mdash; universe{% endblock %}
+{% block body %}
+{% for w in deck_warnings %}<div class="warn">deck: {{ w }}</div>{% endfor %}
+<h2>Universe</h2>
+{% if not companies %}<p class="meta">Nothing stored yet. Run <code>ledger refresh RY.TO</code>.</p>{% endif %}
+<div class="wrap"><table>
+<tr><th>ticker</th><th>name</th><th>model</th><th>sector</th><th>as of</th>
+<th>populated</th><th>status</th><th>audit</th></tr>
+{% for c in companies %}
+<tr>
+<td><a href="/company/{{ c.ticker }}">{{ c.ticker }}</a></td>
+<td>{{ c.name or '-' }}</td>
+<td><span class="badge">{{ c.schema_kind }}</span></td>
+<td>{{ c.sector or '-' }}</td>
+<td>{{ c.as_of or '-' }}</td>
+<td>{{ c.populated }}/{{ c.total }}{% if c.low_conf %} <span class="badge low">{{ c.low_conf }} low-confidence</span>{% endif %}</td>
+<td>{% if c.blocked %}<span class="badge blocked">RECONCILIATION_FAILED</span>{% else %}<span class="ok">ok</span>{% endif %}</td>
+<td><a href="/audit/{{ c.ticker }}">audit</a></td>
+</tr>
+{% endfor %}
+</table></div>
+<h2>Commodity deck <span class="meta">v{{ deck.deck_version }} &mdash; user assumptions, not fetched</span></h2>
+<div class="wrap"><table><tr><th>commodity</th><th>value</th><th>unit</th><th>set on</th><th>age</th></tr>
+{% for k, p in deck.prices.items() %}
+<tr><td>{{ k }}</td>
+<td>{% if p.value is none %}<span class="null">unset</span>{% else %}{{ '%.2f'|format(p.value) }}{% endif %}</td>
+<td>{{ p.unit }}</td><td>{{ p.set_on or '-' }}</td>
+<td>{% if p.stale %}<span class="null">{{ p.age_days }}d STALE</span>{% else %}{{ p.age_days if p.age_days is not none else '-' }}{% endif %}</td></tr>
+{% endfor %}</table></div>
+{% endblock %}
