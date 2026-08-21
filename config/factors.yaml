@@ -1,0 +1,28 @@
+# Look-through factor map.
+#
+# Maps an issuer's OWN disclosed segment names to macro factors. The weights
+# come from fetched segment earnings -- this file only declares which segment
+# belongs to which factor. A segment that is not mapped contributes to no
+# factor and is reported as unmapped, never silently dropped.
+#
+# Add your holdings here. An unmapped ticker yields null factor exposure with a
+# reason, not a zero.
+
+factors:
+  canadian_household_credit:
+    description: "Earnings dependent on Canadian consumer and residential mortgage credit"
+  oil:
+    description: "Earnings dependent on the level of crude prices"
+  rate_level:
+    description: "Earnings dependent on the level of policy and term rates"
+  canadian_gdp:
+    description: "Earnings dependent on domestic Canadian activity"
+
+# ticker -> segment name -> list of factors that segment loads on
+mappings: {}
+#  RY.TO:
+#    "Personal & Commercial Banking": [canadian_household_credit, rate_level, canadian_gdp]
+#    "Capital Markets": [rate_level]
+#  CNQ.TO:
+#    "Oil Sands Mining and Upgrading": [oil]
+#    "Exploration and Production": [oil]

@@ -1,0 +1,2 @@
+# One ticker per line. Used by the scheduled refresh in deploy/.
+# Lines starting with # are ignored by the cron examples via `grep -v`.

@@ -1,0 +1,70 @@
+# Mid-cycle commodity deck.
+#
+# EVERY VALUE IN THIS FILE IS AN ASSUMPTION, NOT A FETCHED FIGURE.
+#
+# The system treats it as such: deck-normalized outputs are tagged
+# method='normalized', carry the deck version and the date each price was set,
+# and the UI shows a staleness warning once a price is older than
+# `stale_after_days`.  Nothing here is ever presented as observed data.
+#
+# A commodity that is absent from this deck cannot be normalized: mid-cycle
+# metrics for names exposed to it return None with reason 'deck_not_set'.
+version: "2026-08-21"
+stale_after_days: 90
+
+prices:
+  wti:
+    value: 65.0
+    unit: USD/bbl
+    set_on: "2026-08-21"
+    basis: "user-supplied mid-cycle assumption (spec default)"
+  wcs_differential:
+    value: 14.0
+    unit: USD/bbl
+    set_on: "2026-08-21"
+    basis: "user-supplied mid-cycle WCS discount to WTI (spec default)"
+  gold:
+    value: 2400.0
+    unit: USD/oz
+    set_on: "2026-08-21"
+    basis: "user-supplied mid-cycle assumption (spec default)"
+  aeco:
+    value: null
+    unit: USD/MMBtu
+    set_on: null
+    basis: "UNSET - Montney gas names return null mid-cycle until set"
+  henry_hub:
+    value: null
+    unit: USD/MMBtu
+    set_on: null
+    basis: "UNSET"
+  copper:
+    value: null
+    unit: USD/lb
+    set_on: null
+    basis: "UNSET"
+  uranium_spot:
+    value: null
+    unit: USD/lb
+    set_on: null
+    basis: "UNSET"
+  uranium_term:
+    value: null
+    unit: USD/lb
+    set_on: null
+    basis: "UNSET - Cameco contracts on term, not spot; both fields modelled"
+  potash:
+    value: null
+    unit: USD/tonne
+    set_on: null
+    basis: "UNSET"
+  met_coal:
+    value: null
+    unit: USD/tonne
+    set_on: null
+    basis: "UNSET"
+  lithium:
+    value: null
+    unit: USD/tonne
+    set_on: null
+    basis: "UNSET"
